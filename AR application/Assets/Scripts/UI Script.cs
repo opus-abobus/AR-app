@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -10,13 +11,30 @@ public class UIScript : MonoBehaviour
 {
     public static UIScript instance;
 
-    [SerializeField] TextMeshProUGUI textFPS, textCamPosInOrigin, textOriginPosInCam, textTrackingOrigMode, textNotTrackingReason;
+    [SerializeField] TextMeshProUGUI textFPS, textCamPosInOrigin, textOriginPosInCam, textTrackingOrigMode, textNotTrackingReason, textLastPlaneClassification;
     [SerializeField] ARSession arSession;
     [SerializeField] XROrigin xrOrigin;
     [SerializeField] ARPointCloudManager cloudManager;
+    [SerializeField] ARPlaneManager planeManager;
 
     private void Start() {
         instance = this;
+    }
+
+    private void OnEnable() {
+        planeManager.planesChanged += OnPlanesChanged;
+    }
+    private void OnDisable() {
+        planeManager.planesChanged -= OnPlanesChanged;
+    }
+
+    private void OnPlanesChanged(ARPlanesChangedEventArgs args) {
+        print("count = " + planeManager.trackables.count);
+        ARTrackable planeTrackable;
+        foreach (var plane in planeManager.trackables) {
+            planeTrackable = plane;
+        }
+        //textLastPlaneClassification.text = "LastPlaneClass: " + planeTrackable;
     }
 
     private void Update() {
