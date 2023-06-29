@@ -8,4 +8,4 @@
   - Для URP Asset Renderer добавить фичу AR Background Renderer Feature
   - Выбрать соответствующий SRP на вкладке Graphics в Project Settings
   - Google ARCore Extensions https://github.com/google-ar/arcore-unity-extensions.git
-  - * установить Cesium https://cesium.com/learn/unity/unity-quickstart/
+  - *установить Cesium https://cesium.com/learn/unity/unity-quickstart/
