@@ -18,6 +18,7 @@
 mono_crash.*
 
 #added------------------
+[Ll]ib/site-packages
 [Pp]ackageCache/
 [Ll]ibrary/
 [Tt]emp/
