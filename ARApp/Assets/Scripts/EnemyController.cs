@@ -9,8 +9,11 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private AudioClip[] audioClip;
     [SerializeField] private int health = 10;
     [SerializeField] private Slider healthBar;
+    [SerializeField] private GameObject enemyPrefab;
     private AudioSource audioSource;
-   
+    private bool inputEnable = true;
+    //private bool trigger = false;
+    
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -20,18 +23,26 @@ public class EnemyController : MonoBehaviour
     {
         healthBar.value = health;
 
-        if(Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
+        if(inputEnable)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-            RaycastHit Hit;
-            if(Physics.Raycast(ray, out Hit))
+            if(Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
             {
-                if(Hit.transform.name == "StoneMonster")
+                Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+                RaycastHit Hit;
+                if(Physics.Raycast(ray, out Hit))
                 {
-                    TakeDamage();
+                    if(Hit.transform.name == "StoneMonster")
+                    {
+                        TakeDamage();
+                    }
                 }
             }
         }
+
+        /*if(trigger)
+        {
+            Attack();
+        }*/
     }
 
     private void TakeDamage()
@@ -43,6 +54,8 @@ public class EnemyController : MonoBehaviour
             anim.CrossFade("Anim_Damage");
             audioSource.clip = audioClip[0];
             audioSource.Play();
+
+            //trigger = false;
         }
         else
         {
@@ -50,6 +63,25 @@ public class EnemyController : MonoBehaviour
             audioSource.clip = audioClip[1];
             audioSource.Play();
             healthBar.gameObject.SetActive(false);
+
+            //trigger = false;
+            inputEnable = false;
+            StartCoroutine(Respawner());
         }
     }
+
+    IEnumerator Respawner()
+    {
+        yield return new WaitForSeconds(3f);
+        anim.CrossFade("Anim_Idle");
+        health = 10;
+        healthBar.gameObject.SetActive(true);
+
+        inputEnable = true;
+    }
+
+    /*private void Attack()
+    {
+        anim.CrossFade("Anim_Attack");
+    }*/
 }
