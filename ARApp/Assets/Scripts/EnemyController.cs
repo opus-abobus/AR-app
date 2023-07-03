@@ -12,7 +12,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject enemyPrefab;
     private AudioSource audioSource;
     private bool inputEnable = true;
-    //private bool trigger = false;
     
     void Start()
     {
@@ -23,15 +22,15 @@ public class EnemyController : MonoBehaviour
     {
         healthBar.value = health;
 
-        if(inputEnable)
+        if (inputEnable)
         {
-            if(Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
+            if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
                 RaycastHit Hit;
-                if(Physics.Raycast(ray, out Hit))
+                if (Physics.Raycast(ray, out Hit))
                 {
-                    if(Hit.transform.name == "StoneMonster")
+                    if (Hit.transform.name == "StoneMonster")
                     {
                         TakeDamage();
                     }
@@ -39,23 +38,21 @@ public class EnemyController : MonoBehaviour
             }
         }
 
-        /*if(trigger)
+        if (anim.IsPlaying("Anim_Damage") == false && anim.IsPlaying("Anim_Idle") == false && inputEnable == true)
         {
-            Attack();
-        }*/
+            anim.CrossFade("Anim_Attack");
+        }
     }
 
     private void TakeDamage()
     {
         health--;
 
-        if(health > 0)
-        {
+        if (health > 0)
+        { 
             anim.CrossFade("Anim_Damage");
             audioSource.clip = audioClip[0];
             audioSource.Play();
-
-            //trigger = false;
         }
         else
         {
@@ -64,7 +61,6 @@ public class EnemyController : MonoBehaviour
             audioSource.Play();
             healthBar.gameObject.SetActive(false);
 
-            //trigger = false;
             inputEnable = false;
             StartCoroutine(Respawner());
         }
@@ -79,9 +75,4 @@ public class EnemyController : MonoBehaviour
 
         inputEnable = true;
     }
-
-    /*private void Attack()
-    {
-        anim.CrossFade("Anim_Attack");
-    }*/
 }
