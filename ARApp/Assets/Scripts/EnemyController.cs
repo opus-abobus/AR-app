@@ -12,6 +12,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject enemyPrefab;
     private AudioSource audioSource;
     private bool inputEnable = true;
+    private bool isAlive = true;
     
     void Start()
     {
@@ -38,10 +39,13 @@ public class EnemyController : MonoBehaviour
             }
         }
 
-        if (anim.IsPlaying("Anim_Damage") == false && anim.IsPlaying("Anim_Idle") == false && inputEnable == true)
+        if (anim.IsPlaying("Anim_Damage"))
         {
-            anim.CrossFade("Anim_Attack");
+            inputEnable = false;
+            StartCoroutine(Antispam());
         }
+
+        Attack();
     }
 
     private void TakeDamage()
@@ -52,7 +56,7 @@ public class EnemyController : MonoBehaviour
         { 
             anim.CrossFade("Anim_Damage");
             audioSource.clip = audioClip[0];
-            audioSource.Play();
+            audioSource.Play();        
         }
         else
         {
@@ -62,6 +66,7 @@ public class EnemyController : MonoBehaviour
             healthBar.gameObject.SetActive(false);
 
             inputEnable = false;
+            isAlive = false;
             StartCoroutine(Respawner());
         }
     }
@@ -73,6 +78,21 @@ public class EnemyController : MonoBehaviour
         health = 10;
         healthBar.gameObject.SetActive(true);
 
+        inputEnable = true;
+        isAlive = true;
+    }
+
+    private void Attack()
+    {
+        if (anim.IsPlaying("Anim_Damage") == false && anim.IsPlaying("Anim_Idle") == false && isAlive == true)
+        {
+            anim.CrossFade("Anim_Attack");
+        }
+    }
+
+    IEnumerator Antispam()
+    {
+        yield return new WaitForSeconds(1f);
         inputEnable = true;
     }
 }
