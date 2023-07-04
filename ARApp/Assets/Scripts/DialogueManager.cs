@@ -3,24 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-public class DialogSystem : MonoBehaviour
+public class DialogueManager : MonoBehaviour
 {
+    [SerializeField] private GameObject dialogueWindow;
+    [SerializeField] private TMP_Text dialogueText;
     [SerializeField] private float textSpeed;
-    [SerializeField] private Text dialogueText;
-    private GameObject dialogueWindow;
 
     private Queue<string> sentences;
 
     void Start()
     {
         sentences = new Queue<string>();
-        dialogueWindow = GetComponent<GameObject>();
     }
 
-    private void StartDialogue(Dialogue dialogue)
+    public void StartDialogue(Dialogue dialogue)
     {
-        dialogueWindow.gameObject.SetActive(true);
+        dialogueWindow.SetActive(true);
         sentences.Clear();
 
         foreach(string sentence in dialogue.sentences)
@@ -31,7 +31,7 @@ public class DialogSystem : MonoBehaviour
         DisplayNextSentence();
     }
 
-    private void DisplayNextSentence()
+    public void DisplayNextSentence()
     {
         if(sentences.Count == 0)
         {
@@ -43,10 +43,11 @@ public class DialogSystem : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(TypeSentence(sentence));
     }
+
     IEnumerator TypeSentence(string sentence)
     {
         dialogueText.text = "";
-        foreach(char letter in sentence.ToCharArray())
+        foreach (char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
             yield return null;

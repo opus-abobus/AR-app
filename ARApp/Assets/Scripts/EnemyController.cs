@@ -9,11 +9,13 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private AudioClip[] audioClip;
     [SerializeField] private int health = 10;
     [SerializeField] private Slider healthBar;
-    [SerializeField] private GameObject enemyPrefab;
+
     private AudioSource audioSource;
     private bool inputEnable = true;
     private bool isAlive = true;
-    
+
+    [SerializeField] private Dialogue dialogue;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -33,19 +35,20 @@ public class EnemyController : MonoBehaviour
                 {
                     if (Hit.transform.name == "StoneMonster")
                     {
-                        TakeDamage();
+                        FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
+                        //TakeDamage();
                     }
                 }
             }
         }
 
-        if (anim.IsPlaying("Anim_Damage"))
+        /*if (anim.IsPlaying("Anim_Damage"))
         {
             inputEnable = false;
             StartCoroutine(Antispam());
-        }
+        }*/
 
-        Attack();
+        //Attack();
     }
 
     private void TakeDamage()
@@ -84,7 +87,7 @@ public class EnemyController : MonoBehaviour
 
     private void Attack()
     {
-        if (anim.IsPlaying("Anim_Damage") == false && anim.IsPlaying("Anim_Idle") == false && isAlive == true)
+        if (!anim.IsPlaying("Anim_Damage") && !anim.IsPlaying("Anim_Idle") && isAlive)
         {
             anim.CrossFade("Anim_Attack");
         }
