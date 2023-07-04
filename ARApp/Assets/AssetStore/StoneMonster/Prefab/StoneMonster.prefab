@@ -181,6 +181,8 @@ GameObject:
   - component: {fileID: 3948181096647992646}
   - component: {fileID: 1761118626936344826}
   - component: {fileID: 4155069507217744742}
+  - component: {fileID: 8454637253504122522}
+  - component: {fileID: 6882142771503784619}
   m_Layer: 0
   m_Name: StoneMonster
   m_TagString: Enemy
@@ -195,7 +197,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3024434924042802157}
-  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 4.98, y: -1.4000007, z: -0.00000011920929}
   m_LocalScale: {x: 4.74, y: 4.74, z: 4.74}
   m_ConstrainProportionsScale: 0
@@ -205,7 +207,7 @@ Transform:
   - {fileID: 6859540493669377106}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!111 &1761118626936344826
 Animation:
   m_ObjectHideFlags: 0
@@ -249,6 +251,36 @@ CapsuleCollider:
   m_Height: 1.2710723
   m_Direction: 1
   m_Center: {x: 0, y: 0.5616359, z: -0.042027656}
+--- !u!114 &8454637253504122522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3024434924042802157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c192fd19f0c66446a81dcc9ebd56ce1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 1761118626936344826}
+  audioClip:
+  - {fileID: 8300000, guid: d44322937fd5f294db153a4f494ae69e, type: 3}
+  - {fileID: 8300000, guid: 438e2157843320445a4f39198d990334, type: 3}
+  health: 10
+  healthBar: {fileID: 3892422243799480601}
+--- !u!114 &6882142771503784619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3024434924042802157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca31b0a9cc4d8cc4ab53507a52e7956b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3606480094205743340
 GameObject:
   m_ObjectHideFlags: 0
