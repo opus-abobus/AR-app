@@ -15,10 +15,4 @@ public class UIController : MonoBehaviour
     {
         mask.gameObject.SetActive(true);
     }
-
-    private void OnTriggerEnter(Collider other) {
-        if (other.CompareTag("EnemyShot")) {
-            GameManager.instance.AngryMob();
-        }
-    }
 }

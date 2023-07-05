@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] GameObject boundaries;
     [SerializeField] GameObject enemyShotPrefab;
     [SerializeField] Transform shotSpawnPoint;
-    [SerializeField] float hitCooldown;
+    //[SerializeField] float hitCooldown;
     [SerializeField, Range(1, 100)] float shotSpeed = 10f;
     [SerializeField] private Animation anim;
     [SerializeField] private AudioClip[] audioClip;
