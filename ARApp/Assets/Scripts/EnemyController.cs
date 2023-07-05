@@ -6,7 +6,12 @@ using UnityEngine.UI;
 
 public class EnemyController : MonoBehaviour
 {
+    [SerializeField] Camera camera;
     [SerializeField] GameObject boundaries;
+    [SerializeField] GameObject enemyShotPrefab;
+    [SerializeField] Transform shotSpawnPoint;
+    [SerializeField] float hitCooldown;
+    [SerializeField, Range(1, 100)] float shotSpeed = 10f;
     [SerializeField] private Animation anim;
     [SerializeField] private AudioClip[] audioClip;
     [SerializeField] private int health = 10;
@@ -34,6 +39,26 @@ public class EnemyController : MonoBehaviour
         //Destroy(boundaries);
         print("-Z: " + minZ); print("Z: " +  maxZ); print("-X " + minX); print("X " + maxX); print("-Y " + minY); print("Y " +  maxY);
     }
+    public void AngryMob() {
+        if (PlayerController.instance.IsAlive)
+            StartCoroutine(Shooting());
+    }
+
+    IEnumerator Shooting() {
+        var shot = Instantiate(enemyShotPrefab, shotSpawnPoint.position, transform.rotation);
+        Vector3 a = transform.position;
+        Vector3 b = camera.transform.position;
+        float t = 0;
+
+        while (t < 1) {
+            t += 0.01f * shotSpeed;
+            shot.transform.position = Vector3.Lerp(a, b, t);
+            yield return new WaitForEndOfFrame();
+        }
+
+        Destroy(shot);
+        PlayerController.instance.TakeDamageFromEnemy();
+    }
 
     void Update()
     {
@@ -49,7 +74,11 @@ public class EnemyController : MonoBehaviour
                 {
                     if (Hit.transform.name == "StoneMonster")
                     {
-                        TakeDamage();
+                        int rnd = Random.Range(0, 5);
+                        if (rnd != 0) {
+                            TakeDamage();
+                        }
+                        
                     }
                 }
             }
