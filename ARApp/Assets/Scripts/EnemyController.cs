@@ -76,13 +76,14 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator Respawner()
     {
-        yield return new WaitForSeconds(3f);
         anim.CrossFade("Anim_Idle");
         health = 10;
         healthBar.gameObject.SetActive(true);
 
         inputEnable = true;
         isAlive = true;
+
+        yield return new WaitForSeconds(3f);
     }
 
     private void Attack()

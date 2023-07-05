@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.UIElements;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -11,21 +12,30 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField] private float textSpeed;
 
-    private Queue<string> sentences;
+    [SerializeField] private GameObject prevButton;
 
-    void Start()
+    public string[] sentences;
+    public int index;
+
+    void Update()
     {
-        sentences = new Queue<string>();
+        ShowPreviousButton();
     }
 
     public void StartDialogue(Dialogue dialogue)
     {
-        dialogueWindow.SetActive(true);
-        sentences.Clear();
+        index = 0;
+        int length = 0;
 
-        foreach(string sentence in dialogue.sentences)
+        dialogueWindow.SetActive(true);
+        Array.Clear(sentences, 0, sentences.Length);
+
+        //dialogue.sentences.CopyTo(sentences, 0);
+
+        foreach (string sentence in dialogue.sentences)
         {
-            sentences.Enqueue(sentence);
+            sentences.SetValue(sentence, length);
+            length++;
         }
 
         DisplayNextSentence();
@@ -33,24 +43,45 @@ public class DialogueManager : MonoBehaviour
 
     public void DisplayNextSentence()
     {
-        if(sentences.Count == 0)
+        if (sentences.Length == 0)//|| index == sentences.Length
         {
-            dialogueWindow.gameObject.SetActive(false);
+            dialogueWindow.SetActive(false);
             return;
         }
 
-        string sentence = sentences.Dequeue();
         StopAllCoroutines();
-        StartCoroutine(TypeSentence(sentence));
+        StartCoroutine(TypeSentence(sentences[index]));
+
+        index++;
+    }
+
+    public void DisplayPreviousSentence()
+    {
+        StopAllCoroutines();
+        StartCoroutine(TypeSentence(sentences[index-1]));
+
+        index--;
     }
 
     IEnumerator TypeSentence(string sentence)
     {
         dialogueText.text = "";
-        foreach (char letter in sentence.ToCharArray())
+        foreach(char letter in sentence.ToCharArray())
         {
             dialogueText.text += letter;
             yield return null;
+        }
+    }
+
+    private void ShowPreviousButton()
+    {
+        if(index > 0)
+        {
+            prevButton.SetActive(true);
+        }
+        else
+        {
+            prevButton.SetActive(false); 
         }
     }
 }

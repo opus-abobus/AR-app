@@ -19,7 +19,7 @@ public class UIController : MonoBehaviour
         mask.gameObject.SetActive(true);
     }
 
-    public void DialogueHide()
+    /*public void DialogueHide()
     {
         dialogueWindow.SetActive(false);
     }
@@ -27,5 +27,5 @@ public class UIController : MonoBehaviour
     public void DialogueShow()
     {
         dialogueWindow.SetActive(true);
-    }
+    }*/
 }
