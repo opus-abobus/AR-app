@@ -1,26 +1,26 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogSystem : MonoBehaviour
+public class DialogueManager : MonoBehaviour
 {
     [SerializeField] private float textSpeed;
-    [SerializeField] private Text dialogueText;
-    private GameObject dialogueWindow;
+    [SerializeField] private TextMeshProUGUI dialogueText;
+    [SerializeField] GameObject dialogueWindow;
 
     private Queue<string> sentences;
 
     void Start()
     {
         sentences = new Queue<string>();
-        dialogueWindow = GetComponent<GameObject>();
     }
 
-    private void StartDialogue(Dialogue dialogue)
+    public void StartDialogue(Dialogue dialogue)
     {
-        dialogueWindow.gameObject.SetActive(true);
+        dialogueWindow.SetActive(true);
         sentences.Clear();
 
         foreach(string sentence in dialogue.sentences)
@@ -31,11 +31,11 @@ public class DialogSystem : MonoBehaviour
         DisplayNextSentence();
     }
 
-    private void DisplayNextSentence()
+    public void DisplayNextSentence()
     {
         if(sentences.Count == 0)
         {
-            dialogueWindow.gameObject.SetActive(false);
+            dialogueWindow.SetActive(false);
             return;
         }
 

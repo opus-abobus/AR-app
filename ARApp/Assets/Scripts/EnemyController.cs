@@ -16,9 +16,13 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private AudioClip[] audioClip;
     [SerializeField] private int health = 10;
     [SerializeField] private Slider healthBar;
+    [SerializeField] private Dialogue dialogue;
+    [SerializeField] DialogueManager dialogueManager;
+    [SerializeField] DialogueManager2 dialogueManager2;
     private AudioSource audioSource;
     private bool inputEnable = true;
-    private bool isAlive = true;
+    [HideInInspector] public bool isAlive = true;
+    [HideInInspector] public bool isAngry = false;
     
     void Start()
     {
@@ -36,8 +40,8 @@ public class EnemyController : MonoBehaviour
         maxX = boundaries.GetNamedChild("XB").transform.position.x;
         minY = boundaries.GetNamedChild("YB").transform.position.y;
         maxY = boundaries.GetNamedChild("-YB").transform.position.y;
-        //Destroy(boundaries);
-        print("-Z: " + minZ); print("Z: " +  maxZ); print("-X " + minX); print("X " + maxX); print("-Y " + minY); print("Y " +  maxY);
+        Destroy(boundaries);
+        //print("-Z: " + minZ); print("Z: " +  maxZ); print("-X " + minX); print("X " + maxX); print("-Y " + minY); print("Y " +  maxY);
     }
     public void AngryMob() {
         if (PlayerController.instance.IsAlive)
@@ -59,7 +63,7 @@ public class EnemyController : MonoBehaviour
         Destroy(shot);
         PlayerController.instance.TakeDamageFromEnemy();
     }
-
+    bool dialogueFlag = false;
     void Update()
     {
         healthBar.value = health;
@@ -74,15 +78,34 @@ public class EnemyController : MonoBehaviour
                 {
                     if (Hit.transform.name == "StoneMonster")
                     {
+                        //FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
+
                         int rnd = Random.Range(0, 5);
                         if (rnd != 0) {
-                            TakeDamage();
+                            //TakeDamage();
+                            //HitTheMob();
                         }
                         
                     }
                 }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) && isAlive) {
+            TakeDamage();
+            dialogueManager2.HitTheMob();
+        }
+
+        
+        /*if (Input.GetKeyDown(KeyCode.Space)) {
+            if (!dialogueFlag) {
+                dialogueManager.StartDialogue(dialogue);
+                dialogueFlag = true;
+            }
+            else {
+                dialogueManager.DisplayNextSentence();
+            }
+        }*/
 
         if (anim.IsPlaying("Anim_Damage"))
         {

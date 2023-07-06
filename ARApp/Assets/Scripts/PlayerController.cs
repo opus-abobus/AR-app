@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamageFromEnemy() {
         healthPoints -= 20;
+        StopAllCoroutines();
         StartCoroutine(DamageEffect(1));
     }
 
