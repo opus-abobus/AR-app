@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:ARApp/Assets/AR Configs.meta
+guid: 18787422255914344bd32750414a7a87
+========
 guid: 1684773fb7fae3144aeacf59f07b1f0d
+>>>>>>>> remotes/origin/Yurich:ARApp/Assets/AssetStore.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

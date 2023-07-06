@@ -1,26 +1,69 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class EnemyController : MonoBehaviour
 {
+    [SerializeField] Camera camera;
+    [SerializeField] GameObject boundaries;
+    [SerializeField] GameObject enemyShotPrefab;
+    [SerializeField] Transform shotSpawnPoint;
+    //[SerializeField] float hitCooldown;
+    [SerializeField, Range(1, 100)] float shotSpeed = 10f;
     [SerializeField] private Animation anim;
     [SerializeField] private AudioClip[] audioClip;
     [SerializeField] private int health = 10;
     [SerializeField] private Slider healthBar;
-
+    [SerializeField] private Dialogue dialogue;
+    [SerializeField] DialogueManager dialogueManager;
+    [SerializeField] DialogueManager2 dialogueManager2;
     private AudioSource audioSource;
     private bool inputEnable = true;
-    private bool isAlive = true;
-
-    [SerializeField] private Dialogue dialogue;
-
+    [HideInInspector] public bool isAlive = true;
+    [HideInInspector] public bool isAngry = false;
+    
     void Start()
     {
+        isMoving = false;
         audioSource = GetComponent<AudioSource>();
+        InitBoundaries();
     }
 
+    float minZ, maxZ, minX, maxX, minY, maxY;
+    void InitBoundaries()
+    {
+        minZ = boundaries.GetNamedChild("-ZB").transform.position.z;
+        maxZ = boundaries.GetNamedChild("ZB").transform.position.z;
+        minX = boundaries.GetNamedChild("-XB").transform.position.x;
+        maxX = boundaries.GetNamedChild("XB").transform.position.x;
+        minY = boundaries.GetNamedChild("YB").transform.position.y;
+        maxY = boundaries.GetNamedChild("-YB").transform.position.y;
+        Destroy(boundaries);
+        //print("-Z: " + minZ); print("Z: " +  maxZ); print("-X " + minX); print("X " + maxX); print("-Y " + minY); print("Y " +  maxY);
+    }
+    public void AngryMob() {
+        if (PlayerController.instance.IsAlive)
+            StartCoroutine(Shooting());
+    }
+
+    IEnumerator Shooting() {
+        var shot = Instantiate(enemyShotPrefab, shotSpawnPoint.position, transform.rotation);
+        Vector3 a = transform.position;
+        Vector3 b = camera.transform.position;
+        float t = 0;
+
+        while (t < 1) {
+            t += 0.01f * shotSpeed;
+            shot.transform.position = Vector3.Lerp(a, b, t);
+            yield return new WaitForEndOfFrame();
+        }
+
+        Destroy(shot);
+        PlayerController.instance.TakeDamageFromEnemy();
+    }
+    bool dialogueFlag = false;
     void Update()
     {
         healthBar.value = health;
@@ -36,11 +79,33 @@ public class EnemyController : MonoBehaviour
                     if (Hit.transform.name == "StoneMonster")
                     {
                         //FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
-                        TakeDamage();
+
+                        int rnd = Random.Range(0, 5);
+                        if (rnd != 0) {
+                            //TakeDamage();
+                            //HitTheMob();
+                        }
+                        
                     }
                 }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) && isAlive) {
+            TakeDamage();
+            dialogueManager2.HitTheMob();
+        }
+
+        
+        /*if (Input.GetKeyDown(KeyCode.Space)) {
+            if (!dialogueFlag) {
+                dialogueManager.StartDialogue(dialogue);
+                dialogueFlag = true;
+            }
+            else {
+                dialogueManager.DisplayNextSentence();
+            }
+        }*/
 
         if (anim.IsPlaying("Anim_Damage"))
         {
@@ -74,21 +139,59 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    bool isMoving;
+    public void StartMove()
+    {
+        if (!isMoving)
+        {
+            StartCoroutine(Moving());
+            isMoving = true;
+        }
+        
+    }
+
+    IEnumerator Moving()
+    {
+        float t = 0;
+        while (true)
+        {
+            while (t < 1)
+            {
+                Vector3 a = transform.position;
+                Vector3 b = Vector3.zero;
+
+                int rnd = Random.Range(0, 6);
+                if (rnd == 0) b = new Vector3(minX, a.y, a.z);
+                else if (rnd == 1) b = new Vector3(maxX, a.y, a.z);
+                else if (rnd == 2) b = new Vector3(a.x, minY, a.z);
+                else if (rnd == 3) b = new Vector3(a.x, maxY, a.z);
+                //else if (rnd == 4) b = new Vector3(a.x, a.y, maxZ);
+                //else if (rnd == 5) b = new Vector3(a.x, a.y, minZ);
+
+                t += 0.01f;
+                transform.position = Vector3.Lerp(a, b, t);
+                yield return new WaitForEndOfFrame();
+            }
+            t = 0;
+            
+            yield return new WaitForSeconds(2);
+        }
+    }
+
     IEnumerator Respawner()
     {
+        yield return new WaitForSeconds(3f);
         anim.CrossFade("Anim_Idle");
         health = 10;
         healthBar.gameObject.SetActive(true);
 
         inputEnable = true;
         isAlive = true;
-
-        yield return new WaitForSeconds(3f);
     }
 
     private void Attack()
     {
-        if (!anim.IsPlaying("Anim_Damage") && !anim.IsPlaying("Anim_Idle") && isAlive)
+        if (anim.IsPlaying("Anim_Damage") == false && anim.IsPlaying("Anim_Idle") == false && isAlive == true)
         {
             anim.CrossFade("Anim_Attack");
         }

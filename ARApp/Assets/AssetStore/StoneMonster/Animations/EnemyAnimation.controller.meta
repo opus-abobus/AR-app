@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:ARApp/Assets/For AR Foundation Package/Materials/DebugFace.mat.meta
+guid: ff27e398c830f3d47afdb94b016a5d53
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+========
 guid: d27a932a696690e4c865b75f3a0c6633
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 9100000
+>>>>>>>> remotes/origin/Yurich:ARApp/Assets/AssetStore/StoneMonster/Animations/EnemyAnimation.controller.meta
   userData: 
   assetBundleName: 
   assetBundleVariant: 

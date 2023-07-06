@@ -1,9 +1,15 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:ARApp/Assets/ExtensionsAssets/Runtime.meta
+guid: e32e3bf15bad3e04c934ff8cd30ab78a
+folderAsset: yes
+========
 guid: e8c422a80d526f644a036ca832332b34
 folderAsset: yes
 timeCreated: 1506571777
 licenseType: Store
+>>>>>>>> remotes/origin/Yurich:ARApp/Assets/AssetStore/StoneMonster/Materials.meta
 DefaultImporter:
+  externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
