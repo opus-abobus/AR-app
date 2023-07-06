@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private Canvas mask;
-    [SerializeField] private GameObject dialogueWindow;
+    [SerializeField] Canvas mask;
+    [SerializeField] GameObject dialogueWindow;
 
-    private EnemyController enemyController;
+    [SerializeField] EnemyController enemyController;
 
     public void MaskHide()
     {

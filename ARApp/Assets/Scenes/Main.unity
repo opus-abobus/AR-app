@@ -1477,7 +1477,7 @@ PrefabInstance:
     - target: {fileID: 8454637253504122522, guid: d72756a284d2e724a895af9390dccbcd, type: 3}
       propertyPath: dialogueManager
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1644980346}
     - target: {fileID: 8454637253504122522, guid: d72756a284d2e724a895af9390dccbcd, type: 3}
       propertyPath: dialogueManager2
       value: 
@@ -2189,6 +2189,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mask: {fileID: 204755580}
   dialogueWindow: {fileID: 1249978345}
+  enemyController: {fileID: 740506008}
 --- !u!1 &1244692104
 GameObject:
   m_ObjectHideFlags: 0
