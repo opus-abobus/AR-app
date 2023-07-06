@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using TMPro;
 using Unity.XR.CoreUtils;
 using UnityEngine;
@@ -114,6 +116,14 @@ public class DialogueManager2 : MonoBehaviour
         }
 
         StopAllCoroutines();
+
+        if (endDialogType == EndDialogType.rewarded)
+        {
+            GeneratePromo();
+            print("Promo: " + promocode);
+            dialogueText.text = "Ваш промокод: " + promocode;
+        }
+
         print("end: " + endDialogType);
     }
 
@@ -338,5 +348,21 @@ public class DialogueManager2 : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         EndDialogue(endType);
+    }
+
+    string promocode = "";
+
+    void GeneratePromo(int length = 6)
+    {
+        char[] promocodeChars = new char[length];
+
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new System.Random();
+
+        for (int i = 0; i < promocodeChars.Length; i++)
+        {
+            promocodeChars[i] = chars[random.Next(chars.Length)];
+            promocode += promocodeChars[i];
+        }
     }
 }
