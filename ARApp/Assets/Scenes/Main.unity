@@ -2811,7 +2811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b660afdca2af84c8615edf8667e1bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  typeSpeed: 1
+  typeSpeed: 50
   dialogueWindow: {fileID: 1249978345}
   dialogueText: {fileID: 251712233}
   positiveAnswerButton: {fileID: 251712232}

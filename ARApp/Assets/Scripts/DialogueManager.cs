@@ -163,6 +163,7 @@ public class DialogueManager : MonoBehaviour
 
         if (enemyController.isAngry) {
             //isHit = true;
+            enemyController.AngryMob();
             return;
         }
 
@@ -328,11 +329,13 @@ public class DialogueManager : MonoBehaviour
 
     IEnumerator TypeSentence(string sentence) {
 
+        float delay = 1 / typeSpeed;
+
         dialogueText.text = "";
 
         foreach (char letter in sentence.ToCharArray()) {
             dialogueText.text += letter;
-            yield return null;
+            yield return new WaitForSeconds(delay);
         }
 
     }
