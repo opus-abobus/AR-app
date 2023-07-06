@@ -35,19 +35,42 @@ public class DialogueManager2 : MonoBehaviour
         start, A, B, C, AA, AB, AAA1, AAA2, AAA3, AAA
     };
     string[] sentences;
+    string[] positiveButtonSentences, negativeButtonSentences;
 
-    // Тут проблемки с некоторыми буквами...
+    // Тут возможны проблемки с некоторыми буквами...
     void InitSentences() {
-        sentences = new string[Enum.GetValues(typeof(SentenceID)).Length];
+        int idCount = Enum.GetValues(typeof(SentenceID)).Length;
+        sentences = new string[idCount];
+        positiveButtonSentences = new string[idCount];
+        negativeButtonSentences = new string[idCount];
+
         sentences[(int) SentenceID.start] = "Добро пожаловать в мое подземелье, путник.";
+        positiveButtonSentences[(int)SentenceID.start] = "Привет";
+        negativeButtonSentences[(int)SentenceID.start] = "Прочь с дороги";
+
         sentences[(int) SentenceID.A] = "У меня есть кое-что для тебя.\nЕсли мы с тобой поладим, то эта штука станет твоей, что скажешь?";
+        positiveButtonSentences[(int)SentenceID.A] = "Окей, что ты предлагаешь?";
+        negativeButtonSentences[(int)SentenceID.A] = "У меня нет на это времени";
+
         sentences[(int) SentenceID.B] = "Ну и черт с тобой!";
+
         sentences[(int) SentenceID.C] = "Ай, больно же! Разве так отвечают на приветствие?";
+        positiveButtonSentences[(int)SentenceID.C] = "Ой, прости, я не нарочно";
+
         sentences[(int) SentenceID.AA] = "Ответишь на несколько простых вопросов?";
+        positiveButtonSentences[(int)SentenceID.AA] = "Да";
+        negativeButtonSentences[(int)SentenceID.AA] = "У меня нет на это времени";
+
         sentences[(int) SentenceID.AB] = "Что ж, как знаешь.";
+        
         sentences[(int) SentenceID.AAA1] = "Вам понравилось сие заведение?";
+        positiveButtonSentences[(int)SentenceID.AAA1] = positiveButtonSentences[(int)SentenceID.AAA2] = positiveButtonSentences[(int)SentenceID.AAA3] = "Да";
+        negativeButtonSentences[(int)SentenceID.AAA1] = negativeButtonSentences[(int)SentenceID.AAA2] = negativeButtonSentences[(int)SentenceID.AAA3] = "Нет";
+
         sentences[(int) SentenceID.AAA2] = "Вероятно ли, что Вы еще вернетесь в это заведение?";
+
         sentences[(int) SentenceID.AAA3] = "Посоветуете наше заведение своим знакомым?";
+
         sentences[(int) SentenceID.AAA] = "Замечательно, в знак признательности я дарю Вам промокод для получения скидки на кассе данного заведения.\nСчастливого пути!";
     }
 
@@ -61,6 +84,14 @@ public class DialogueManager2 : MonoBehaviour
 
         currentSentenceID = SentenceID.start;
         StartCoroutine(TypeSentence(sentences[(int) currentSentenceID]));
+
+        UpdateButtonText(currentSentenceID);
+    }
+
+    void UpdateButtonText(SentenceID sentenceID)
+    {
+        positiveButtonText.text = positiveButtonSentences[(int) sentenceID];
+        negativeButtonText.text = negativeButtonSentences[(int) sentenceID];
     }
 
     public void EndDialogue(EndDialogType endDialogType) {
@@ -116,6 +147,8 @@ public class DialogueManager2 : MonoBehaviour
         DetermineNextSentenceID();
 
         StartCoroutine(TypeSentence(sentences[(int) currentSentenceID]));
+
+        UpdateButtonText(currentSentenceID);
 
         Debug();
     }
