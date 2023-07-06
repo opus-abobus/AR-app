@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Vuforia;
+//using Vuforia; 
 
 public class GameManager : MonoBehaviour
 {
@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject mobInstance;
     EnemyController enemyController;
     [SerializeField] GameObject targetObject;
-    [SerializeField] VuforiaBehaviour vuforiaBehaviour;
+    //[SerializeField] VuforiaBehaviour vuforiaBehaviour;
 
 
     bool isMobSpawned;

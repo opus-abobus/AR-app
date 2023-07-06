@@ -647,6 +647,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 194461093048975087, guid: 85ec7f13af23c6742a804c85bd8a33f0, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1721541184}
     - target: {fileID: 2679667933767709777, guid: 85ec7f13af23c6742a804c85bd8a33f0, type: 3}
       propertyPath: m_Name
       value: UI
@@ -703,6 +707,10 @@ PrefabInstance:
       propertyPath: enemyController
       value: 
       objectReference: {fileID: 740506008}
+    - target: {fileID: 7599043172970168044, guid: 85ec7f13af23c6742a804c85bd8a33f0, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1079,7 +1087,6 @@ MonoBehaviour:
   mobPrefab: {fileID: 3024434924042802157, guid: d72756a284d2e724a895af9390dccbcd, type: 3}
   mobInstance: {fileID: 740506007}
   targetObject: {fileID: 1931985897}
-  vuforiaBehaviour: {fileID: 1721541182}
 --- !u!114 &1721541188
 MonoBehaviour:
   m_ObjectHideFlags: 0
