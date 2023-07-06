@@ -7,7 +7,6 @@ using TMPro;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
-using static DialogueManager;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -15,6 +14,7 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] GameObject dialogueWindow;
     [SerializeField] TextMeshProUGUI dialogueText;
+    [SerializeField] UnityEngine.UI.Text text;
 
     [SerializeField] Button positiveAnswerButton;
     [SerializeField] Button negativeAnswerButton;
@@ -23,6 +23,9 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] EnemyController enemyController;
     [SerializeField] PlayerController playerController;
+
+    [SerializeField] AudioClip[] audioClip;
+    AudioSource audioSource;
 
     [HideInInspector] public enum DialogState {
         notStarted, inProgress, ended
@@ -88,6 +91,8 @@ public class DialogueManager : MonoBehaviour
     private void Awake() {
         dialogState = DialogState.notStarted;
         InitSentences();
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     [HideInInspector] SentenceID currentSentenceID;
@@ -328,13 +333,17 @@ public class DialogueManager : MonoBehaviour
     EndDialogType endType;
 
     IEnumerator TypeSentence(string sentence) {
-
         float delay = 1 / typeSpeed;
 
-        dialogueText.text = "";
+        //dialogueText.text = "";
+        text.text = "";
+
+        audioSource.clip = audioClip[UnityEngine.Random.Range(0, audioClip.Length)];
+        audioSource.Play();
 
         foreach (char letter in sentence.ToCharArray()) {
-            dialogueText.text += letter;
+            //dialogueText.text += letter;
+            text.text += letter;
             yield return new WaitForSeconds(delay);
         }
 
