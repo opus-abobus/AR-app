@@ -1,87 +1,351 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using UnityEngine.UIElements;
 
 public class DialogueManager : MonoBehaviour
 {
-    [SerializeField] private GameObject dialogueWindow;
-    [SerializeField] private TMP_Text dialogueText;
-    [SerializeField] private float textSpeed;
+    [SerializeField] float typeSpeed = 1;
 
-    [SerializeField] private GameObject prevButton;
+    [SerializeField] GameObject dialogueWindow;
+    [SerializeField] TextMeshProUGUI dialogueText;
 
-    public string[] sentences;
-    public int index;
+    [SerializeField] Button positiveAnswerButton;
+    [SerializeField] Button negativeAnswerButton;
+    [SerializeField] TextMeshProUGUI positiveButtonText;
+    [SerializeField] TextMeshProUGUI negativeButtonText;
 
-    void Update()
-    {
-        ShowPreviousButton();
+    [SerializeField] EnemyController enemyController;
+    [SerializeField] PlayerController playerController;
+
+    [SerializeField] AudioClip[] audioClip;
+    AudioSource audioSource;
+
+    [HideInInspector] public enum AnswerType {
+        Positive,
+        Negative,
+        Alternative,
+        Neutral
     }
 
-    public void StartDialogue(Dialogue dialogue)
-    {
-        index = 0;
-        int length = 0;
+    //<summary>
+    // A: means positive answer type, B - negative, C - alternative, D - Neutral
+    //<summary>
+   enum SentenceID {
+        start, A, B, C, AA, AB, AAA1, AAA2, AAA3, AAA
+    };
+    string[] sentences;
+    string[] positiveButtonSentences, negativeButtonSentences;
 
+    // Тут возможны проблемки с некоторыми буквами...
+    void InitSentences() {
+        int idCount = Enum.GetValues(typeof(SentenceID)).Length;
+        sentences = new string[idCount];
+        positiveButtonSentences = new string[idCount];
+        negativeButtonSentences = new string[idCount];
+
+        sentences[(int) SentenceID.start] = "Добро пожаловать в мое подземелье, путник.";
+        positiveButtonSentences[(int)SentenceID.start] = "Привет";
+        negativeButtonSentences[(int)SentenceID.start] = "Прочь с дороги";
+
+        sentences[(int) SentenceID.A] = "У меня есть кое-что для тебя.\nЕсли мы с тобой поладим, то эта штука станет твоей, что скажешь?";
+        positiveButtonSentences[(int)SentenceID.A] = "Окей, что ты предлагаешь?";
+        negativeButtonSentences[(int)SentenceID.A] = "У меня нет на это времени";
+
+        sentences[(int) SentenceID.B] = "Ну и черт с тобой!";
+
+        sentences[(int) SentenceID.C] = "Ай, больно же! Разве так отвечают на приветствие?";
+        positiveButtonSentences[(int)SentenceID.C] = "Ой, прости, я не нарочно";
+
+        sentences[(int) SentenceID.AA] = "Ответишь на несколько простых вопросов?";
+        positiveButtonSentences[(int)SentenceID.AA] = "Да";
+        negativeButtonSentences[(int)SentenceID.AA] = "У меня нет на это времени";
+
+        sentences[(int) SentenceID.AB] = "Что ж, как знаешь.";
+        
+        sentences[(int) SentenceID.AAA1] = "Вам понравилось сие заведение?";
+        positiveButtonSentences[(int)SentenceID.AAA1] = positiveButtonSentences[(int)SentenceID.AAA2] = positiveButtonSentences[(int)SentenceID.AAA3] = "Да";
+        negativeButtonSentences[(int)SentenceID.AAA1] = negativeButtonSentences[(int)SentenceID.AAA2] = negativeButtonSentences[(int)SentenceID.AAA3] = "Нет";
+
+        sentences[(int) SentenceID.AAA2] = "Вероятно ли, что Вы еще вернетесь в это заведение?";
+
+        sentences[(int) SentenceID.AAA3] = "Посоветуете наше заведение своим знакомым?";
+
+        sentences[(int) SentenceID.AAA] = "Замечательно, в знак признательности я дарю Вам промокод для получения скидки на кассе данного заведения.\nСчастливого пути!";
+    }
+
+    private void Awake() {
+        InitSentences();
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    [HideInInspector] SentenceID currentSentenceID;
+    public void StartDialogue() {
         dialogueWindow.SetActive(true);
-        Array.Clear(sentences, 0, sentences.Length);
 
-        //dialogue.sentences.CopyTo(sentences, 0);
+        currentSentenceID = SentenceID.start;
 
-        foreach (string sentence in dialogue.sentences)
-        {
-            sentences.SetValue(sentence, length);
-            length++;
+        StartCoroutine(TypeSentence(sentences[(int) currentSentenceID]));
+
+
+        UpdateButtonText(currentSentenceID);
+    }
+
+    void UpdateButtonText(SentenceID sentenceID)
+    {
+        positiveButtonText.text = positiveButtonSentences[(int) sentenceID];
+        negativeButtonText.text = negativeButtonSentences[(int) sentenceID];
+    }
+
+    public void EndDialogue(EndDialogType endDialogType) {
+
+        positiveAnswerButton.onClick.RemoveAllListeners();
+        negativeAnswerButton.onClick.RemoveAllListeners();
+
+        if (endDialogType == EndDialogType.startFight) {
+            print("fight started");
+
+            dialogueText.text = "";
+            dialogueWindow.SetActive(false);
+
+            StartCoroutine(Fighting());
+
+            return;
+        }
+        else {
+            dialogueWindow.SetActive(false);
         }
 
-        DisplayNextSentence();
+        StopAllCoroutines();
+        print("end: " + endDialogType);
     }
 
-    public void DisplayNextSentence()
-    {
-        if (sentences.Length == 0)//|| index == sentences.Length
-        {
-            dialogueWindow.SetActive(false);
+    IEnumerator Fighting() {
+        while (playerController.IsAlive && enemyController.isAlive) {
+            yield return null;
+        }
+
+        if (!playerController.IsAlive) {
+            endType = EndDialogType.deadPlayer;
+        }
+        else {
+            endType = EndDialogType.deadMob;
+        }
+        StartCoroutine(SmoothEnd(1));
+        //EndDialogue(endType);
+    }
+
+    [HideInInspector] public AnswerType lastAnswerType;
+
+    public void GiveAnswer(AnswerType answerType) {
+        StopCoroutine(TypeSentence(sentences[(int) lastAnswerType]));
+
+        lastAnswerType = answerType;
+
+        if (enemyController.isAngry) {
+            //isHit = true;
             return;
         }
 
-        StopAllCoroutines();
-        StartCoroutine(TypeSentence(sentences[index]));
+        DetermineNextSentenceID();
 
-        index++;
+        StartCoroutine(TypeSentence(sentences[(int) currentSentenceID]));
+
+        UpdateButtonText(currentSentenceID);
+
+        Debug();
     }
 
-    public void DisplayPreviousSentence()
-    {
-        StopAllCoroutines();
-        StartCoroutine(TypeSentence(sentences[index-1]));
-
-        index--;
+    void Debug() {
+        print("lastAnswerType: " + lastAnswerType);
     }
 
-    IEnumerator TypeSentence(string sentence)
-    {
+    bool isHit = false;
+    public void HitTheMob() {
+
+        if (enemyController.isAngry) {
+            //return;
+        }
+
+        if (isHit) { 
+            enemyController.isAngry = true; 
+            endType = EndDialogType.startFight; 
+            EndDialogue(endType);
+            return;
+        }
+
+        GiveAnswer(AnswerType.Alternative);
+
+        /*lastAnswerType = AnswerType.Alternative;
+
+        if (!isHit ) {
+            DetermineNextSentenceID();
+            StartCoroutine(TypeSentence(sentences[(int) currentSentenceID]));
+            isHit = true;
+        }
+        else {
+            enemyController.isAngry = true;
+        }*/
+    }
+
+    void DetermineNextSentenceID() {
+        switch (currentSentenceID) {
+
+            // FROM: start
+            case SentenceID.start: {
+                    switch (lastAnswerType) {
+                        case AnswerType.Positive: { currentSentenceID = SentenceID.A; break; }
+                        case AnswerType.Negative: { currentSentenceID = SentenceID.B; break; }
+                        case AnswerType.Alternative: { currentSentenceID = SentenceID.C; break; }
+                    }
+                    break;
+                }
+            
+            // FROM: A
+            case SentenceID.A: {
+                    switch (lastAnswerType) {
+                        case AnswerType.Positive: { currentSentenceID = SentenceID.AA; break; }
+                        case AnswerType.Negative: { currentSentenceID = SentenceID.AB; endType = EndDialogType.normal; StartCoroutine(SmoothEnd(1)); break; }
+                    }
+                    break;
+                }
+
+            // FROM: B
+            case SentenceID.B: {
+                    // normal end
+                    endType = EndDialogType.normal;
+                    EndDialogue(endType);
+                    break;
+                }
+
+            // FROM: C
+            case SentenceID.C: {
+                    switch (lastAnswerType) {
+                        case AnswerType.Positive: { currentSentenceID = SentenceID.A; break; }
+
+                        // fight starts
+                        case AnswerType.Alternative: { 
+
+                                if (endType != EndDialogType.startFight) {
+                                    endType = EndDialogType.startFight; 
+                                    EndDialogue(endType);
+                                }
+                                    
+                                break;
+                            }
+                    }
+                    break;
+                }
+
+            // FROM: AA
+            case SentenceID.AA: {
+                    switch (lastAnswerType) {
+                        case AnswerType.Positive: { currentSentenceID = SentenceID.AAA1; break; }
+                        case AnswerType.Negative: { 
+                                currentSentenceID = SentenceID.AB;
+                                endType = EndDialogType.normal;
+                                StartCoroutine(SmoothEnd(1));
+                                break; 
+                            }
+                    }
+                    break;
+                }
+
+            // FROM: AB
+            case SentenceID.AB: {
+                    // normal end
+                    endType = EndDialogType.normal;
+                    EndDialogue(endType);
+                    break;
+                }
+
+            // FROM: AAA
+            case SentenceID.AAA1: {
+                    lastAnswerType = AnswerType.Neutral;
+
+                    currentSentenceID = SentenceID.AAA2;
+
+                    // store the answer
+
+                    break;
+                }
+
+            // FROM: AAA2
+            case SentenceID.AAA2: {
+                    lastAnswerType = AnswerType.Neutral;
+
+                    currentSentenceID = SentenceID.AAA3;
+
+                    // store the answer
+
+                    break;
+                }
+
+            // FROM: AAA3
+            case SentenceID.AAA3: {
+                    lastAnswerType = AnswerType.Neutral;
+
+                    currentSentenceID = SentenceID.AAA;
+
+                    // store the answer
+
+                    break;
+                }
+
+            // FROM: AAA3
+            case SentenceID.AAA: {
+                    // rewarded end
+                    endType = EndDialogType.rewarded;
+                    EndDialogue(endType);
+                    break;
+                }
+        }
+    }
+
+    [HideInInspector] public enum EndDialogType {
+        normal, deadMob, deadPlayer, rewarded, startFight
+    }
+    EndDialogType endType;
+
+    IEnumerator TypeSentence(string sentence) {
+        float delay = 1 / typeSpeed;
+
         dialogueText.text = "";
-        foreach(char letter in sentence.ToCharArray())
-        {
+
+        audioSource.clip = audioClip[UnityEngine.Random.Range(0, audioClip.Length)];
+        audioSource.Play();
+
+        foreach (char letter in sentence.ToCharArray()) {
             dialogueText.text += letter;
-            yield return null;
+            yield return new WaitForSeconds(delay);
         }
     }
 
-    private void ShowPreviousButton()
-    {
-        if(index > 0)
-        {
-            prevButton.SetActive(true);
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.K)) {
+            StartDialogue();
         }
-        else
-        {
-            prevButton.SetActive(false); 
-        }
+    }
+
+    private void OnEnable() {
+        positiveAnswerButton.onClick.AddListener(() => GiveAnswer(AnswerType.Positive));
+        negativeAnswerButton.onClick.AddListener(() => GiveAnswer(AnswerType.Negative));
+    }
+
+    private void OnDisable() {
+        positiveAnswerButton.onClick.RemoveAllListeners();
+        negativeAnswerButton.onClick.RemoveAllListeners();
+    }
+
+    IEnumerator SmoothEnd(float delay) {
+        positiveAnswerButton.gameObject.SetActive(false);
+        negativeAnswerButton.gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(delay);
+
+        EndDialogue(endType);
     }
 }

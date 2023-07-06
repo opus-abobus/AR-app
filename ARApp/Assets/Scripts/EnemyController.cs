@@ -12,15 +12,14 @@ public class EnemyController : MonoBehaviour
     [SerializeField] Transform shotSpawnPoint;
     //[SerializeField] float hitCooldown;
     [SerializeField, Range(1, 100)] float shotSpeed = 10f;
-    [SerializeField] private Animation anim;
-    [SerializeField] private AudioClip[] audioClip;
-    [SerializeField] private int health = 10;
-    [SerializeField] private Slider healthBar;
-    [SerializeField] private Dialogue dialogue;
+    [SerializeField] Animation anim;
+    [SerializeField] AudioClip[] audioClip;
+    [SerializeField] int health = 10;
+    [SerializeField] Slider healthBar;
+    [SerializeField] Dialogue dialogue;
     [SerializeField] DialogueManager dialogueManager;
-    [SerializeField] DialogueManager2 dialogueManager2;
-    private AudioSource audioSource;
-    private bool inputEnable = true;
+    AudioSource audioSource;
+    bool inputEnable = true;
     [HideInInspector] public bool isAlive = true;
     [HideInInspector] public bool isAngry = false;
     
@@ -93,7 +92,7 @@ public class EnemyController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && isAlive) {
             TakeDamage();
-            dialogueManager2.HitTheMob();
+            dialogueManager.HitTheMob();
         }
 
         
