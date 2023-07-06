@@ -35,20 +35,20 @@ public class EnemyController : MonoBehaviour
                 {
                     if (Hit.transform.name == "StoneMonster")
                     {
-                        FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
-                        //TakeDamage();
+                        //FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
+                        TakeDamage();
                     }
                 }
             }
         }
 
-        /*if (anim.IsPlaying("Anim_Damage"))
+        if (anim.IsPlaying("Anim_Damage"))
         {
             inputEnable = false;
             StartCoroutine(Antispam());
-        }*/
+        }
 
-        //Attack();
+        Attack();
     }
 
     private void TakeDamage()

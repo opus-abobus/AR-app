@@ -61,6 +61,8 @@
     <Compile Include="Assets\Editor\Migration\AddVuforiaEnginePackage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Editor\Vuforia\plate2\authoringinfo.xml" />
+    <None Include="Assets\Editor\Vuforia\Plate\authoringinfo.xml" />
     <None Include="Assets\Editor\Vuforia\ForPrint\ModelTarget\readme_3dprint.txt" />
     <None Include="Assets\Editor\Vuforia\VuforiaMars_ModelTarget\authoringinfo.xml" />
     <None Include="Assets\Editor\Vuforia\Toilet\authoringinfo.xml" />
